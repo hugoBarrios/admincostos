@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administración de Costos de Calidad de Software</title>
+    <!-- Bootstrap CDN -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h1 class="text-center mb-5">Administración de Costos de Calidad de Software</h1>
+      <div id="game">
+        <p id="introduction"></p>
+        <div id="questions"></div>
+        <button id="submitBtn" class="btn btn-primary mt-3">Enviar respuestas</button>
+        <div id="feedback" class="mt-4"></div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const introductionText = `
+      Eres el líder de un nuevo proyecto de software en una empresa reconocida.
+      Se te ha asignado un presupuesto limitado para garantizar la calidad del software.
+      Deberás tomar decisiones críticas sobre dónde invertir ese presupuesto para asegurar la mejor calidad posible.
+      Recuerda, cada decisión que tomes puede tener un impacto en el resultado final del proyecto.
+      `;
+
+        const questions = [
+          '¿Dónde prefieres invertir más al inicio del proyecto?',
+          'Te das cuenta de que hay errores que se pasaron por alto durante las primeras fases. ¿Qué haces?',
+          'Al comparar costos, ¿qué estrategia prefieres?',
+          'Se aproxima el lanzamiento y el equipo sugiere una revisión adicional de calidad, pero esto excederá el presupuesto. ¿Qué decides?',
+          'Tras el lanzamiento, recibes informes de algunos errores menores. ¿Cuál es tu enfoque?',
+        ];
+
+        const options = [
+          [
+            'En prevención (capacitación, herramientas, etc.)',
+            'En evaluación (pruebas, revisiones de código, etc.)',
+          ],
+          [
+            'Invertir más en detección temprana de errores en futuros proyectos.',
+            'Ajustar el presupuesto actual para corregir los errores después del lanzamiento.',
+          ],
+          [
+            'Comparar con costos del año anterior.',
+            'Comparar con costos de otro proyecto similar.',
+          ],
+          [
+            'Realizar la revisión y buscar formas de ahorrar en otras áreas.',
+            'Seguir adelante sin la revisión adicional para mantenerse dentro del presupuesto.',
+          ],
+          [
+            'Invertir en correcciones inmediatas para mantener la reputación.',
+            'Planificar las correcciones para una futura actualización y priorizar nuevas funcionalidades.',
+          ],
+        ];
+
+        const scores = [
+          [2, 1],
+          [2, 1],
+          [1, 2],
+          [2, 1],
+          [2, 1],
+        ];
+        const introductionElem = document.getElementById('introduction');
+        const questionsElem = document.getElementById('questions');
+        const feedbackElem = document.getElementById('feedback');
+
+        introductionElem.textContent = introductionText;
+
+        questions.forEach((question, index) => {
+          const questionDiv = document.createElement('div');
+          questionDiv.className = 'my-3';
+
+          const questionLabel = document.createElement('label');
+          questionLabel.textContent = question;
+          questionDiv.appendChild(questionLabel);
+
+          const selectElem = document.createElement('select');
+          selectElem.className = 'form-control';
+          selectElem.id = 'question' + index;
+
+          options[index].forEach((option, optIndex) => {
+            const optionElem = document.createElement('option');
+            optionElem.value = optIndex;
+            optionElem.textContent = option;
+            selectElem.appendChild(optionElem);
+          });
+
+          questionDiv.appendChild(selectElem);
+          questionsElem.appendChild(questionDiv);
+        });
+
+        document.getElementById('submitBtn').addEventListener('click', function () {
+          const answers = [];
+          questions.forEach((_, index) => {
+            const selectElem = document.getElementById('question' + index);
+            const selectedOption = Number(selectElem.value);
+            answers.push(scores[index][selectedOption]);
+          });
+
+          const totalPoints = answers.reduce((acc, curr) => acc + curr, 0);
+          let title = '';
+          let icon = '';
+          let result = '';
+
+          if (totalPoints <= 6) {
+            icon = 'error';
+            title = 'Deuda técnica alta';
+            result =
+              'Lamentablemente, hay varios problemas críticos que deben solucionarse antes de que el proyecto pueda ser vendido.';
+          } else if (totalPoints <= 8) {
+            icon = 'warning';
+            title = 'Deuda técnica media';
+            result =
+              'Hay algunos problemas que deben abordarse, pero con algunos ajustes, tu proyecto estará listo para la venta.';
+          } else {
+            icon = 'success';
+            title = 'Exito';
+            result = 'Tu proyecto está listo para salir a la venta.';
+          }
+
+          Swal.fire({
+            title: title,
+            icon: icon,
+            html: `Tu proyecto fue seleccionado para ser vendido a nivel global por la empresa. Para poder venderlo, la empresa te envía un equipo de QA para realizar el análisis de tu sistema y concluyen que, <b> ${result} </b>`,
+            confirmButtonText: 'OK',
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
